@@ -1,0 +1,49 @@
+
+
+# Macro Begin: C:\Users\stuan\AppData\Roaming\FreeCAD\Macro\open and export practice.FCMacro +++++++++++++++++++++++++++++++++++++++++++++++++
+import FreeCAD
+import FreeCADGui
+import Mesh
+import MeshPart
+import Import
+from PySide import QtGui
+
+
+	
+doc = FreeCAD.ActiveDocument
+label = 'Body'
+
+folderstl = str(QtGui.QFileDialog.getExistingDirectory(None, "Select STL File Location"))
+folderstep = str(QtGui.QFileDialog.getExistingDirectory(None, "Select Step File Location"))
+
+App.Console.PrintMessage(folderstl+"\n")
+App.Console.PrintMessage(folderstep+"\n")
+
+def export_body_as_stl_and_step():
+
+	obj = App.ActiveDocument.ActiveObject
+	if not obj:
+		FreeCAD.Console.PrintError("No active object. \n")
+		return
+
+	body = None
+	for obj in doc.Objects:
+		if obj.Label ==label and obj.isDerivedFrom("PartDesign::Body"):
+			body = obj
+			break
+
+	configurations = body.getEnumerationsOfProperty('Configuration')
+	FreeCAD.Console.PrintMessage("Number of Configurations: {}\n".format(configurations))
+
+	for config in configurations:
+		print("Generating file:", config)
+		
+		body.Configuration = config
+		App.ActiveDocument.recompute()
+		filename = "{}/{}.stl".format(folderstl, config)
+		Mesh.export([body], filename)
+		print(body)
+		filenamestep = "{}/{}.step".format(folderstep, config)
+		Import.export([body], filenamestep)
+
+export_body_as_stl_and_step()
