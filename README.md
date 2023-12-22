@@ -5,6 +5,7 @@ Used to export all configurations of a model in STL and STEP formats. There will
 ### Constraints: 
 
 - Only works with part design workbench, or parts with a body.
+- The name of the configuration will become the file name
 
 ## Configuration table Setup requirements!!
 For the macro to work, the property of the configuration table must be as follows. 
